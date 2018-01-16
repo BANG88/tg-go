@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/asdine/storm"
+  packages = [".","codec","codec/json","index","internal","q"]
+  revision = "68fc73b635f890fe7ba2f3b15ce80c85b28a744f"
+  version = "v2.0.2"
+
+[[projects]]
   name = "github.com/bndr/gojenkins"
   packages = ["."]
   revision = "3118be93040f0a8e7c1eeec9f9db09419deb59ab"
@@ -33,6 +39,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "54c9ec7828139cf96286bd066ec84308c28f6558a1ec2dac8c5f9ba820a875d5"
+  inputs-digest = "37cac331bc54cd329927b9c4c68429fcf2db8944abc55bd81f625faac49289ea"
   solver-name = "gps-cdcl"
   solver-version = 1

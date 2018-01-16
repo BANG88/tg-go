@@ -6,6 +6,7 @@ import (
 
 	yaml "gopkg.in/yaml.v2"
 )
+
 // Jenkins Jenkins
 type Jenkins struct {
 	Server   string `yaml:"server"`
@@ -15,13 +16,15 @@ type Jenkins struct {
 
 // Conf app configurations
 type Conf struct {
-	DbPath   string  `yaml:"dbPath"`
-	Jenkins  Jenkins `yaml:"jenkins"`
-	BotToken string  `yaml:"botToken"`
+	DbPath     string  `yaml:"dbPath"`
+	Jenkins    Jenkins `yaml:"jenkins"`
+	BotToken   string  `yaml:"botToken"`
+	SuperAdmin string  `yaml:"superAdmin"`
 }
 
-// GetConfig get
-func (conf *Conf) getConf() *Conf {
+// GetConf get
+func GetConf() Conf {
+	var conf Conf
 	data, err := ioutil.ReadFile("conf.yaml")
 	if err != nil {
 		log.Fatalf("yamlFile.Get err   #%v ", err)

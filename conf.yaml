@@ -4,3 +4,4 @@ jenkins:
   username: bot
   password: '123456'
 botToken: ''
+superAdmin: 'myfel'

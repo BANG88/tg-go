@@ -36,3 +36,7 @@
 [[constraint]]
   branch = "v2"
   name = "gopkg.in/yaml.v2"
+
+[[constraint]]
+  name = "github.com/asdine/storm"
+  version = "2.0.2"

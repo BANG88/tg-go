@@ -22,6 +22,11 @@ func TestGetConfig(t *testing.T) {
 			want: "",
 		},
 		{
+			name: "superAdmin",
+			conf: "SuperAdmin",
+			want: "myfel",
+		},
+		{
 			name: "jenkins",
 			conf: "Server",
 			want: "http://localhost:32769/",
@@ -39,8 +44,7 @@ func TestGetConfig(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			var c Conf
-			conf := c.getConf()
+			conf := GetConf()
 			r := reflect.ValueOf(conf)
 			k := reflect.Indirect(r).FieldByName(tt.conf)
 			switch k.Kind() {
