@@ -2,26 +2,13 @@ package main
 
 import (
 	"log"
-	"time"
 
-	"github.com/asdine/storm"
 	"github.com/bndr/gojenkins"
-	bolt "github.com/coreos/bbolt"
 )
 
 // App bot app
 type App struct {
 	conf Conf
-}
-
-// getDbContext
-func (app *App) getDbContext() *storm.DB {
-	var conf = app.conf
-	db, err := storm.Open(conf.DbPath, storm.BoltOptions(0600, &bolt.Options{Timeout: 10 * time.Second}))
-	if err != nil {
-		log.Printf("can not open database %s", err)
-	}
-	return db
 }
 
 // create jenkins instance
@@ -47,9 +34,9 @@ func main() {
 		conf: GetConf(),
 	}
 	app.start()
-	// db := app.getDbContext()
-	// defer db.Close()
-	// var user User
-	// db.One("Name", app.conf.SuperAdmin, &user)
-	// log.Printf("find user: %s", user.Name)
+	db := getDbContext()
+	defer db.Close()
+	var user User
+	db.One("Name", app.conf.SuperAdmin, &user)
+	log.Printf("find user: %s", user.Name)
 }

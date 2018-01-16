@@ -10,7 +10,7 @@ type User struct {
 }
 
 func (app *App) init(user User) {
-	db := app.getDbContext()
+	db := getDbContext()
 	defer db.Close()
 	db.Init(&User{})
 
@@ -18,4 +18,10 @@ func (app *App) init(user User) {
 	if err != nil {
 		log.Printf("save user failed: %s", err)
 	}
+}
+
+func (user *User) findAll() {
+	db := getDbContext()
+	defer db.Close()
+	// TODO:
 }
