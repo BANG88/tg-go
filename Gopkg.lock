@@ -2,20 +2,37 @@
 
 
 [[projects]]
-  name = "github.com/go-telegram-bot-api/telegram-bot-api"
+  name = "github.com/bndr/gojenkins"
   packages = ["."]
-  revision = "2022d04b94f50056a09962b1ac81cdd821d20a55"
-  version = "v4.6.1"
+  revision = "3118be93040f0a8e7c1eeec9f9db09419deb59ab"
 
 [[projects]]
-  name = "github.com/technoweenie/multipartstreamer"
+  name = "github.com/coreos/bbolt"
   packages = ["."]
-  revision = "a90a01d73ae432e2611d178c18367fbaa13e0154"
-  version = "v1.0.1"
+  revision = "583e8937c61f1af6513608ccc75c97b6abdf4ff9"
+  version = "v1.3.0"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/net"
+  packages = ["html","html/atom"]
+  revision = "5ccada7d0a7ba9aeb5d3aca8d3501b4c2a509fec"
+
+[[projects]]
+  branch = "master"
+  name = "golang.org/x/sys"
+  packages = ["unix"]
+  revision = "810d7000345868fc619eb81f46307107118f4ae1"
+
+[[projects]]
+  branch = "v2"
+  name = "gopkg.in/yaml.v2"
+  packages = ["."]
+  revision = "d670f9405373e636a5a2765eea47fac0c9bc91a4"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6e3e80d6f83883beff961dc7387779c0de38a4d71de402e1f71e8a83a056121d"
+  inputs-digest = "54c9ec7828139cf96286bd066ec84308c28f6558a1ec2dac8c5f9ba820a875d5"
   solver-name = "gps-cdcl"
   solver-version = 1

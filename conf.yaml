@@ -1,0 +1,6 @@
+dbPath: bot.db
+jenkins:
+  server: 'http://localhost:32769/'
+  username: bot
+  password: '123456'
+botToken: ''
