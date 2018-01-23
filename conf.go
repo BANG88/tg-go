@@ -7,7 +7,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// Jenkins Jenkins
+// JenkinsConf Jenkins
 type JenkinsConf struct {
 	Server   string `yaml:"server"`
 	Username string `yaml:"username"`

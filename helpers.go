@@ -47,19 +47,19 @@ func (app *App) makeKeyboard(data []string, rowOfButtons int) *tgbotapi.ReplyKey
 	if rowOfButtons == 0 {
 		rowOfButtons = 2
 	}
-	var keyboardButton []tgbotapi.KeyboardButton
-	var keyboardRows [][]tgbotapi.KeyboardButton
-	for i, d := range data {
-		if len(data) > rowOfButtons {
-			if i%rowOfButtons == 0 {
-				keyboardRows = append(keyboardRows, append(keyboardButton, tgbotapi.NewKeyboardButton(d)))
-			}
-		}
+	var total = len(data) / rowOfButtons
+	var rows = make([][]tgbotapi.KeyboardButton, total)
+	var keyboard []tgbotapi.KeyboardButton
+	for j := 0; j < len(data); j++ {
+		keyboard = append(keyboard, tgbotapi.NewKeyboardButton(data[j]))
+	}
+	for index := 0; index < total; index++ {
+		rows[index] = keyboard[index*rowOfButtons : index*rowOfButtons+rowOfButtons]
 	}
 	var jobKeyboard = tgbotapi.ReplyKeyboardMarkup{
-		Keyboard:        keyboardRows,
+		Keyboard:        rows,
 		OneTimeKeyboard: true,
-		Selective:       true,
+		Selective:       false,
 		ResizeKeyboard:  true,
 	}
 	return &jobKeyboard
