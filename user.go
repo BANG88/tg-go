@@ -19,7 +19,14 @@ func (app *App) init(user User) {
 		log.Printf("save user failed: %s", err)
 	}
 }
+func (app *App) findUser(username string) *User {
+	db := getDbContext()
+	defer db.Close()
+	var user User
+	db.One("Name", username, &user)
 
+	return &user
+}
 func (user *User) findAll() {
 	db := getDbContext()
 	defer db.Close()
