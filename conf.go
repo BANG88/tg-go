@@ -8,7 +8,7 @@ import (
 )
 
 // Jenkins Jenkins
-type Jenkins struct {
+type JenkinsConf struct {
 	Server   string `yaml:"server"`
 	Username string `yaml:"username"`
 	Password string `yaml:"password"`
@@ -16,10 +16,10 @@ type Jenkins struct {
 
 // Conf app configurations
 type Conf struct {
-	DbPath     string  `yaml:"dbPath"`
-	Jenkins    Jenkins `yaml:"jenkins"`
-	BotToken   string  `yaml:"botToken"`
-	SuperAdmin string  `yaml:"superAdmin"`
+	DbPath     string      `yaml:"dbPath"`
+	Jenkins    JenkinsConf `yaml:"jenkins"`
+	BotToken   string      `yaml:"botToken"`
+	SuperAdmin string      `yaml:"superAdmin"`
 }
 
 // GetConf get

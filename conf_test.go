@@ -19,7 +19,7 @@ func TestGetConfig(t *testing.T) {
 		{
 			name: "botToken",
 			conf: "BotToken",
-			want: "",
+			want: "429257402:AAEzDnR-fqz1hgyKsfnZLPkI0A0mS0ngDbA",
 		},
 		{
 			name: "superAdmin",

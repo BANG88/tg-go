@@ -1,17 +1,12 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"io"
-	"io/ioutil"
 	"log"
-	"os"
 	"strings"
 
 	"github.com/bndr/gojenkins"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
-	"github.com/olekukonko/tablewriter"
 )
 
 // Commands supported commands
@@ -34,6 +29,8 @@ type App struct {
 	conf      Conf
 	commands  Commands
 	operators Operators
+	bot       *tgbotapi.BotAPI
+	jenkins   *gojenkins.Jenkins
 }
 
 // create jenkins instance
@@ -53,29 +50,8 @@ func (app *App) start() {
 	}
 	app.init(user)
 }
-func (app *App) makeTable(data [][]string) string {
-	file, err := ioutil.TempFile(os.TempDir(), "bot-")
-	if err != nil {
-		log.Printf("err: %s", err)
-		return ""
-	}
 
-	table := tablewriter.NewWriter(file)
-	table.SetHeader([]string{"#", "Project", "Latest Build"})
-	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
-	table.SetCenterSeparator("|")
-	table.AppendBulk(data) // Add Bulk Data
-	table.Render()         // Send output
-
-	buf := bytes.NewBuffer(nil)
-	f, _ := os.Open(file.Name())
-	io.Copy(buf, f)
-	f.Close()
-	file.Close()
-	defer os.Remove(file.Name())
-	return fmt.Sprintf("`%s`", string(buf.Bytes()))
-}
-func (app *App) handleHelp(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
+func (app *App) handleHelp(message *tgbotapi.Message) {
 	var args = message.CommandArguments()
 	if args == "" {
 		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf(`
@@ -85,69 +61,24 @@ Usage:
 - project ls (List all projects)
 			`))
 		// msg.ReplyToMessageID = message.MessageID
-		bot.Send(msg)
+		app.bot.Send(msg)
 	}
 }
-func (app *App) handleAdmin(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
+func (app *App) handleAdmin(message *tgbotapi.Message) {
 	var args = message.CommandArguments()
 	if args != "" {
-		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf(`
-			command: %s,
-			args: %s,
-			`, app.commands.Admin, args))
+		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf(`command: %s,args: %s,`, app.commands.Admin, args))
 		msg.ReplyToMessageID = message.MessageID
-		bot.Send(msg)
+		app.bot.Send(msg)
 	}
 }
-func (app *App) handleProject(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
-	j := app.getJenkinsInstance()
-	var args = message.CommandArguments()
-	if args == "" {
-		jobs, err := j.GetAllJobs()
-		if err != nil {
-			return
-		}
-		var data [][]string
-		for index, job := range jobs {
-			build, err := job.GetLastBuild()
-			result := "N/A"
-			if err != nil {
-				log.Printf("error: %s", err)
-			} else {
-				result = build.GetResult()
-			}
-			id := fmt.Sprintf("%v", index+1)
-			name := fmt.Sprintf("%s", job.GetName())
-			// name := fmt.Sprintf("[%s](http://www.example.com/)", job.GetName())
-			data = append(data, []string{id, name, result})
-		}
-		var str = app.makeTable(data)
-		log.Printf("str: %s", str)
-		msg := tgbotapi.NewMessage(message.Chat.ID, str)
-		msg.ParseMode = tgbotapi.ModeMarkdown
-		// msg.ReplyToMessageID = message.MessageID
-		bot.Send(msg)
-	} else {
-		innerJob, err := j.GetAllJobNames()
-		if err != nil {
-			return
-		}
-		var keyboardButton []tgbotapi.KeyboardButton
-		for _, job := range innerJob {
-			keyboardButton = append(keyboardButton, tgbotapi.NewKeyboardButton(fmt.Sprintf("/%s %s %s", app.commands.Project, app.operators.Build, job.Name)))
-		}
-		var keyboard [][]tgbotapi.KeyboardButton
-		keyboard = append(keyboard, keyboardButton)
-		var jobKeyboard = tgbotapi.ReplyKeyboardMarkup{
-			Keyboard:        keyboard,
-			OneTimeKeyboard: true,
-			Selective:       true,
-			ResizeKeyboard:  true,
-		}
-		msg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
-		msg.ReplyMarkup = jobKeyboard
-		bot.Send(msg)
-	}
+
+/**
+ * getCommandArguments getCommandArguments
+ */
+func (app *App) getCommandArguments(message *tgbotapi.Message) string {
+	args := strings.ToLower(message.CommandArguments())
+	return args
 }
 
 // start bot routine
@@ -156,7 +87,8 @@ func (app *App) startBot() {
 	if err != nil {
 		log.Panic(err)
 	}
-
+	// app bot
+	app.bot = bot
 	bot.Debug = true
 
 	log.Printf("Authorized on account %s", bot.Self.UserName)
@@ -172,25 +104,27 @@ func (app *App) startBot() {
 		if update.Message == nil {
 			continue
 		}
-		user := app.findUser(update.Message.Chat.UserName)
-		if !user.IsAdmin {
+		if !update.Message.IsCommand() {
 			continue
 		}
-		if !update.Message.IsCommand() {
+		user := app.findUser(update.Message.Chat.UserName)
+		if !user.IsAdmin {
 			continue
 		}
 		// handle command
 		command := strings.ToLower(update.Message.Command())
 		switch command {
 		case app.commands.Admin:
-			app.handleAdmin(bot, update.Message)
+			app.handleAdmin(update.Message)
 		case app.commands.Help:
-			app.handleHelp(bot, update.Message)
+			app.handleHelp(update.Message)
 		case app.commands.Project:
-			app.handleProject(bot, update.Message)
+			app.handleProject(update.Message)
 		}
 	}
 }
+
+// runnnn
 func main() {
 	var commands = Commands{
 		Admin:   "admin",
@@ -208,6 +142,7 @@ func main() {
 		commands:  commands,
 		operators: operators,
 	}
+	app.jenkins = app.getJenkinsInstance()
 	app.start()
 	app.startBot()
 }
