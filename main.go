@@ -1,12 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"io"
+	"io/ioutil"
 	"log"
+	"os"
 	"strings"
 
 	"github.com/bndr/gojenkins"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/olekukonko/tablewriter"
 )
 
 // Commands supported commands
@@ -48,6 +53,28 @@ func (app *App) start() {
 	}
 	app.init(user)
 }
+func (app *App) makeTable(data [][]string) string {
+	file, err := ioutil.TempFile(os.TempDir(), "bot-")
+	if err != nil {
+		log.Printf("err: %s", err)
+		return ""
+	}
+
+	table := tablewriter.NewWriter(file)
+	table.SetHeader([]string{"#", "Project", "Latest Build"})
+	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
+	table.SetCenterSeparator("|")
+	table.AppendBulk(data) // Add Bulk Data
+	table.Render()         // Send output
+
+	buf := bytes.NewBuffer(nil)
+	f, _ := os.Open(file.Name())
+	io.Copy(buf, f)
+	f.Close()
+	file.Close()
+	defer os.Remove(file.Name())
+	return fmt.Sprintf("`%s`", string(buf.Bytes()))
+}
 func (app *App) handleHelp(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
 	var args = message.CommandArguments()
 	if args == "" {
@@ -80,18 +107,25 @@ func (app *App) handleProject(bot *tgbotapi.BotAPI, message *tgbotapi.Message) {
 		if err != nil {
 			return
 		}
-		var str = ""
+		var data [][]string
 		for index, job := range jobs {
 			build, err := job.GetLastBuild()
+			result := "N/A"
 			if err != nil {
 				log.Printf("error: %s", err)
 			} else {
-				str += fmt.Sprintf("%v. [%s] %s\n", index, job.GetName(), build.GetResult())
+				result = build.GetResult()
 			}
+			id := fmt.Sprintf("%v", index+1)
+			name := fmt.Sprintf("%s", job.GetName())
+			// name := fmt.Sprintf("[%s](http://www.example.com/)", job.GetName())
+			data = append(data, []string{id, name, result})
 		}
+		var str = app.makeTable(data)
 		log.Printf("str: %s", str)
 		msg := tgbotapi.NewMessage(message.Chat.ID, str)
-		msg.ReplyToMessageID = message.MessageID
+		msg.ParseMode = tgbotapi.ModeMarkdown
+		// msg.ReplyToMessageID = message.MessageID
 		bot.Send(msg)
 	} else {
 		innerJob, err := j.GetAllJobNames()

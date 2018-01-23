@@ -24,6 +24,18 @@
   revision = "5435d1d8eaf19425b40aebf050f5fda3280c00cc"
 
 [[projects]]
+  name = "github.com/mattn/go-runewidth"
+  packages = ["."]
+  revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
+  version = "v0.0.2"
+
+[[projects]]
+  branch = "master"
+  name = "github.com/olekukonko/tablewriter"
+  packages = ["."]
+  revision = "96aac992fc8b1a4c83841a6c3e7178d20d989625"
+
+[[projects]]
   name = "github.com/technoweenie/multipartstreamer"
   packages = ["."]
   revision = "a90a01d73ae432e2611d178c18367fbaa13e0154"
@@ -50,6 +62,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "616321102ee3ee2020d2380d1ab5d8252898442bdc5cbc010a3f597930e121bb"
+  inputs-digest = "ad2ad2f4e906e48c5535317df57f30013959699d836879a32f52896756e61606"
   solver-name = "gps-cdcl"
   solver-version = 1
