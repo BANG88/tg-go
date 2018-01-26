@@ -9,9 +9,10 @@ import (
 
 // JenkinsConf Jenkins
 type JenkinsConf struct {
-	Server   string `yaml:"server"`
-	Username string `yaml:"username"`
-	Password string `yaml:"password"`
+	Server         string `yaml:"server"`
+	Username       string `yaml:"username"`
+	Password       string `yaml:"password"`
+	TelegramChatID string `yaml:"telegramChatId"`
 }
 
 // Conf app configurations

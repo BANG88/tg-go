@@ -43,18 +43,12 @@ func (app *App) makeTable(data [][]string) string {
 /**
  * makeKeyboard make keyboard
  */
-func (app *App) makeKeyboard(data []string, rowOfButtons int) *tgbotapi.ReplyKeyboardMarkup {
-	if rowOfButtons == 0 {
-		rowOfButtons = 2
-	}
-	var total = len(data) / rowOfButtons
+func (app *App) makeKeyboard(data []string) *tgbotapi.ReplyKeyboardMarkup {
+
+	var total = len(data)
 	var rows = make([][]tgbotapi.KeyboardButton, total)
-	var keyboard []tgbotapi.KeyboardButton
-	for j := 0; j < len(data); j++ {
-		keyboard = append(keyboard, tgbotapi.NewKeyboardButton(data[j]))
-	}
-	for index := 0; index < total; index++ {
-		rows[index] = keyboard[index*rowOfButtons : index*rowOfButtons+rowOfButtons]
+	for j := 0; j < total; j++ {
+		rows[j] = append(rows[j], tgbotapi.NewKeyboardButton(data[j]))
 	}
 	var jobKeyboard = tgbotapi.ReplyKeyboardMarkup{
 		Keyboard:        rows,

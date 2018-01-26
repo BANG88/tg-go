@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"regexp"
+	"strconv"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 )
@@ -20,7 +21,7 @@ func (app *App) handleListProject(message *tgbotapi.Message) {
 	for _, job := range innerJob {
 		data = append(data, fmt.Sprintf("/%s %s %s", app.commands.Project, app.operators.Build, job.Name))
 	}
-	var jobKeyboard = app.makeKeyboard(data, 2)
+	var jobKeyboard = app.makeKeyboard(data)
 	msg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
 	msg.ReplyMarkup = jobKeyboard
 	app.bot.Send(msg)
@@ -61,13 +62,20 @@ func (app *App) handleBuildProject(message *tgbotapi.Message) {
 	if match == nil {
 		return
 	}
-	_, err := app.jenkins.BuildJob(match[1])
+	var params = map[string]string{app.conf.Jenkins.TelegramChatID: strconv.FormatInt(message.Chat.ID, 10)}
+
+	_, err := app.jenkins.BuildJob(match[1], params)
 	if err != nil {
-		fmt.Printf("build error: %s", err)
+		fmt.Printf("Build error: %s", err)
+		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("Build %s failure 😢: %s", match[1], err))
+		msg.ParseMode = tgbotapi.ModeMarkdown
+		app.bot.Send(msg)
+	} else {
+		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("Build %s started 😊", match[1]))
+		msg.ParseMode = tgbotapi.ModeMarkdown
+		app.bot.Send(msg)
 	}
-	msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("build %s started", match[1]))
-	msg.ParseMode = tgbotapi.ModeMarkdown
-	app.bot.Send(msg)
+
 }
 
 const buildReg = "build ([\\w\\.\\-_\\/ ]+)?"
