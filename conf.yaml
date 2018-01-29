@@ -3,5 +3,6 @@ jenkins:
   server: 'http://localhost:32769/'
   username: bot
   password: '123456'
+  telegramChatId: 'Telegram_Chat_ID'
 botToken: '429257402:AAEzDnR-fqz1hgyKsfnZLPkI0A0mS0ngDbA'
 superAdmin: 'myfel'
