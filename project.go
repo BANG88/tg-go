@@ -18,7 +18,7 @@ const folder = "com.cloudbees.hudson.plugins.folder.Folder"
  */
 func (app *App) handleListProject(message *tgbotapi.Message) {
 	args := app.getCommandArguments(message)
-	folderName := app.getFolderName(args)
+	folderName := app.getArgument(args)
 	endpoint := "/"
 	if folderName != "" {
 		endpoint = "/job/" + folderName
@@ -82,7 +82,7 @@ func (app *App) handleListProjectStatus(message *tgbotapi.Message) {
 		// name := fmt.Sprintf("[%s](http://www.example.com/)", job.GetName())
 		data = append(data, []string{id, name, result})
 	}
-	var str = app.makeTable(data)
+	var str = app.makeTable(data, nil)
 	log.Printf("str: %s", str)
 	msg := tgbotapi.NewMessage(message.Chat.ID, str)
 	msg.ParseMode = tgbotapi.ModeMarkdown
@@ -93,7 +93,7 @@ func (app *App) handleListProjectStatus(message *tgbotapi.Message) {
 // handleBuildProject build project
 func (app *App) handleBuildProject(message *tgbotapi.Message) {
 	args := app.getCommandArguments(message)
-	command := app.getFolderName(args)
+	command := app.getArgument(args)
 	if command == "" {
 		return
 	}

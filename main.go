@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"strings"
 
@@ -44,7 +43,6 @@ func (app *App) getJenkinsInstance() *gojenkins.Jenkins {
 }
 func (app *App) start() {
 	user := User{
-		ID:      1,
 		Name:    app.conf.SuperAdmin,
 		IsAdmin: true,
 	}
@@ -52,33 +50,17 @@ func (app *App) start() {
 }
 
 func (app *App) handleHelp(message *tgbotapi.Message) {
-	var args = message.CommandArguments()
-	if args == "" {
-		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf(`
-Usage:
-- admin ls (List all administrators)
-- help (Get help)
-- project ls (List all projects)
-			`))
-		// msg.ReplyToMessageID = message.MessageID
-		app.bot.Send(msg)
+	var data = [][]string{
+		[]string{"/" + app.commands.Help, "🆘"},
+		[]string{"/" + app.commands.Admin, "List all administrators"},
+		[]string{"/" + app.commands.Project, "List all projects"},
 	}
-}
-func (app *App) handleAdmin(message *tgbotapi.Message) {
-	var args = message.CommandArguments()
-	if args != "" {
-		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf(`command: %s,args: %s,`, app.commands.Admin, args))
-		msg.ReplyToMessageID = message.MessageID
-		app.bot.Send(msg)
-	}
-}
 
-/**
- * getCommandArguments getCommandArguments
- */
-func (app *App) getCommandArguments(message *tgbotapi.Message) string {
-	args := strings.TrimSpace(message.CommandArguments())
-	return args
+	var str = app.makeTable(data, []string{"Command", "Desc"})
+	msg := tgbotapi.NewMessage(message.Chat.ID, str)
+	msg.ParseMode = tgbotapi.ModeMarkdown
+	msg.ReplyToMessageID = message.MessageID
+	app.bot.Send(msg)
 }
 
 // start bot routine
