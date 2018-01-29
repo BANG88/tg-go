@@ -22,9 +22,8 @@ func (app *App) init(user User) {
 
 // addUser Add user
 func (app *App) addUser(user User) error {
-
 	u := app.findUser(user.Name)
-	if &u != nil {
+	if u.Name != "" {
 		return nil
 	}
 	db := getDbContext()
@@ -50,7 +49,7 @@ func (app *App) removeUser(username string) error {
 		return errors.New("We need At least one admin")
 	}
 	user := app.findUser(username)
-	if &user != nil {
+	if user.Name != "" {
 		db := getDbContext()
 		defer db.Close()
 		err := db.DeleteStruct(&user)
@@ -109,9 +108,9 @@ func (app *App) handleAdmin(message *tgbotapi.Message) {
 		if users != nil {
 			var data [][]string
 			for index, user := range users {
-				data = append(data, []string{fmt.Sprintf("%v", index), user.Name})
+				data = append(data, []string{fmt.Sprintf("%v", index), user.Name, fmt.Sprintf("%v", user.IsAdmin)})
 			}
-			var str = app.makeTable(data, []string{"#", "Name"})
+			var str = app.makeTable(data, []string{"#", "Name", "Admin"})
 			msg := tgbotapi.NewMessage(message.Chat.ID, str)
 			msg.ParseMode = tgbotapi.ModeMarkdown
 			app.bot.Send(msg)
