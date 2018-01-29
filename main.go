@@ -98,6 +98,8 @@ func (app *App) startBot() {
 		switch command {
 		case app.commands.Admin:
 			app.handleAdmin(update.Message)
+		case "start":
+			app.handleHelp(update.Message)
 		case app.commands.Help:
 			app.handleHelp(update.Message)
 		case app.commands.Project:
