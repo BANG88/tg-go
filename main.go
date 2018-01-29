@@ -5,7 +5,7 @@ import (
 	"log"
 	"strings"
 
-	"github.com/bndr/gojenkins"
+	"github.com/bang88/gojenkins"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 )
 

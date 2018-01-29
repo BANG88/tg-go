@@ -8,9 +8,9 @@
   version = "v2.0.2"
 
 [[projects]]
-  name = "github.com/bndr/gojenkins"
+  name = "github.com/bang88/gojenkins"
   packages = ["."]
-  revision = "3118be93040f0a8e7c1eeec9f9db09419deb59ab"
+  revision = "01a3ce091fcb92a3bf7cb646943ed142b1a81e81"
 
 [[projects]]
   name = "github.com/coreos/bbolt"
@@ -62,6 +62,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "ad2ad2f4e906e48c5535317df57f30013959699d836879a32f52896756e61606"
+  inputs-digest = "65a8399cb1cc54d4ab4eed0863067ced70f8dce38c63ac261eed94a9ec4e6b02"
   solver-name = "gps-cdcl"
   solver-version = 1

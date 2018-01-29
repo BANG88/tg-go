@@ -22,8 +22,8 @@
 
 
 [[constraint]]
-  name = "github.com/bndr/gojenkins"
-  revision = "3118be93040f0a8e7c1eeec9f9db09419deb59ab"
+  name = "github.com/bang88/gojenkins"
+  revision = "01a3ce091fcb92a3bf7cb646943ed142b1a81e81"
 
 [[constraint]]
   name = "github.com/go-telegram-bot-api/telegram-bot-api"
