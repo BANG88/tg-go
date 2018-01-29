@@ -19,15 +19,18 @@ import (
  * make table
  * return a formatted table or empty string
  */
-func (app *App) makeTable(data [][]string) string {
+func (app *App) makeTable(data [][]string, header []string) string {
 	file, err := ioutil.TempFile(os.TempDir(), "bot-")
 	if err != nil {
 		log.Printf("err: %s", err)
 		return ""
 	}
+	if header == nil {
+		header = []string{"#", "Project", "Build"}
+	}
 
 	table := tablewriter.NewWriter(file)
-	table.SetHeader([]string{"#", "Project", "Build"})
+	table.SetHeader(header)
 	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
 	table.SetCenterSeparator("|")
 	table.AppendBulk(data) // Add Bulk Data
@@ -61,12 +64,20 @@ func (app *App) makeKeyboard(data []string) *tgbotapi.ReplyKeyboardMarkup {
 	return &jobKeyboard
 }
 
-// getFolderName get folder name from command
-func (app *App) getFolderName(args string) string {
+// getArgument get folder name from command
+func (app *App) getArgument(args string) string {
 	reg := regexp.MustCompile(buildReg)
 	match := reg.FindStringSubmatch(args)
 	if match == nil {
 		return ""
 	}
 	return strings.TrimSpace(match[1])
+}
+
+/**
+ * getCommandArguments getCommandArguments
+ */
+func (app *App) getCommandArguments(message *tgbotapi.Message) string {
+	args := strings.TrimSpace(message.CommandArguments())
+	return args
 }
