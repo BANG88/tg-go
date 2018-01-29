@@ -3,26 +3,59 @@ package main
 import (
 	"fmt"
 	"log"
-	"regexp"
 	"strconv"
+	"strings"
+
+	"github.com/bndr/gojenkins"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 )
+
+const folder = "com.cloudbees.hudson.plugins.folder.Folder"
 
 /**
  * handleListProject list all projects as keyboard
  */
 func (app *App) handleListProject(message *tgbotapi.Message) {
-	innerJob, err := app.jenkins.GetAllJobNames()
-	if err != nil {
-		return
+	args := app.getCommandArguments(message)
+	folderName := app.getFolderName(args)
+	endpoint := "/"
+	if folderName != "" {
+		endpoint = "/job/" + folderName
 	}
 	var data []string
-	for _, job := range innerJob {
-		data = append(data, fmt.Sprintf("/%s %s %s", app.commands.Project, app.operators.Build, job.Name))
+	exec := gojenkins.Executor{Raw: new(gojenkins.ExecutorResponse), Jenkins: app.jenkins}
+	_, err := app.jenkins.Requester.GetJSON(endpoint, exec.Raw, nil)
+	for _, job := range exec.Raw.Jobs {
+		var ji *gojenkins.Job
+		if folderName != "" {
+			ji, _ = app.jenkins.GetJob(job.Name, folderName)
+		} else {
+			ji, _ = app.jenkins.GetJob(job.Name)
+		}
+
+		if err != nil {
+			log.Printf("get job failure: %s", err)
+			return
+		}
+		if ji.Raw.Class == folder {
+			data = append(data, fmt.Sprintf("/%s %s %s", app.commands.Project, app.operators.List, ji.GetName()))
+		} else {
+			jobName := ji.GetName()
+			if folderName != "" {
+				jobName = fmt.Sprintf("%s/job/%s", folderName, ji.GetName())
+			}
+			data = append(data, fmt.Sprintf("/%s %s %s", app.commands.Project, app.operators.Build, jobName))
+		}
 	}
+	if err != nil {
+		log.Printf("get jobs failure: %s", err)
+		return
+	}
+
 	var jobKeyboard = app.makeKeyboard(data)
 	msg := tgbotapi.NewMessage(message.Chat.ID, message.Text)
+	msg.ReplyToMessageID = message.MessageID
 	msg.ReplyMarkup = jobKeyboard
 	app.bot.Send(msg)
 }
@@ -54,46 +87,48 @@ func (app *App) handleListProjectStatus(message *tgbotapi.Message) {
 	msg := tgbotapi.NewMessage(message.Chat.ID, str)
 	msg.ParseMode = tgbotapi.ModeMarkdown
 	app.bot.Send(msg)
+	app.handleListProject(message)
 }
+
+// handleBuildProject build project
 func (app *App) handleBuildProject(message *tgbotapi.Message) {
 	args := app.getCommandArguments(message)
-	reg := regexp.MustCompile(buildReg)
-	match := reg.FindStringSubmatch(args)
-	if match == nil {
+	command := app.getFolderName(args)
+	if command == "" {
 		return
 	}
+	// If we want receive build results from Jenkins we
+	// need add these params
 	var params = map[string]string{app.conf.Jenkins.TelegramChatID: strconv.FormatInt(message.Chat.ID, 10)}
 
-	_, err := app.jenkins.BuildJob(match[1], params)
+	_, err := app.jenkins.BuildJob(command, params)
 	if err != nil {
 		fmt.Printf("Build error: %s", err)
-		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("Build %s failure 😢: %s", match[1], err))
+		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("Build %s failure 😢: %s", command, err))
 		msg.ParseMode = tgbotapi.ModeMarkdown
 		app.bot.Send(msg)
 	} else {
-		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("Build %s started 😊", match[1]))
+		msg := tgbotapi.NewMessage(message.Chat.ID, fmt.Sprintf("Build started for: %s 😊", command))
 		msg.ParseMode = tgbotapi.ModeMarkdown
 		app.bot.Send(msg)
 	}
 
 }
 
-const buildReg = "build ([\\w\\.\\-_\\/ ]+)?"
+const buildReg = "\\w+ ([\\w\\.\\-_\\/ ]+)?"
 
 /**
  * handle project
  */
 func (app *App) handleProject(message *tgbotapi.Message) {
 	args := app.getCommandArguments(message)
-	reg := regexp.MustCompile(buildReg)
-	match := reg.FindStringSubmatch(args)
-	isBuild := match != nil
+	isBuild := strings.HasPrefix(args, app.operators.Build)
 	switch true {
 	case isBuild:
 		app.handleBuildProject(message)
-	case app.operators.List == args:
-		app.handleListProject(message)
 	case "" == args:
 		app.handleListProjectStatus(message)
+	default:
+		app.handleListProject(message)
 	}
 }
