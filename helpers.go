@@ -7,6 +7,8 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"regexp"
+	"strings"
 
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 
@@ -25,7 +27,7 @@ func (app *App) makeTable(data [][]string) string {
 	}
 
 	table := tablewriter.NewWriter(file)
-	table.SetHeader([]string{"#", "Project", "Latest Build"})
+	table.SetHeader([]string{"#", "Project", "Build"})
 	table.SetBorders(tablewriter.Border{Left: true, Top: false, Right: true, Bottom: false})
 	table.SetCenterSeparator("|")
 	table.AppendBulk(data) // Add Bulk Data
@@ -57,4 +59,14 @@ func (app *App) makeKeyboard(data []string) *tgbotapi.ReplyKeyboardMarkup {
 		ResizeKeyboard:  true,
 	}
 	return &jobKeyboard
+}
+
+// getFolderName get folder name from command
+func (app *App) getFolderName(args string) string {
+	reg := regexp.MustCompile(buildReg)
+	match := reg.FindStringSubmatch(args)
+	if match == nil {
+		return ""
+	}
+	return strings.TrimSpace(match[1])
 }
