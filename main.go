@@ -77,7 +77,7 @@ func (app *App) handleAdmin(message *tgbotapi.Message) {
  * getCommandArguments getCommandArguments
  */
 func (app *App) getCommandArguments(message *tgbotapi.Message) string {
-	args := strings.ToLower(message.CommandArguments())
+	args := strings.TrimSpace(message.CommandArguments())
 	return args
 }
 
