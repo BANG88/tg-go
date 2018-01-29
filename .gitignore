@@ -16,3 +16,4 @@ vendor
 tg-go*
 debug
 bot.db
+dist
