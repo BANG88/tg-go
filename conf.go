@@ -3,6 +3,7 @@ package main
 import (
 	"io/ioutil"
 	"log"
+	"os"
 
 	yaml "gopkg.in/yaml.v2"
 )
@@ -26,7 +27,31 @@ type Conf struct {
 // GetConf get
 func GetConf() Conf {
 	var conf Conf
-	data, err := ioutil.ReadFile("conf.yaml")
+	const fileName = "conf.yml"
+	_, err := os.Stat(fileName)
+	if err != nil {
+		if os.IsNotExist(err) {
+			f, err := os.Create(fileName)
+			defer f.Close()
+			if err != nil {
+				log.Fatalf("create file %s failed: %s", fileName, err)
+			}
+			f.WriteString(`
+# bot configurations
+dbPath: bot.db
+jenkins:
+  server: 'jenkins-server-address'
+  username: jenkins_admin
+  password: 'jenkins_password'
+  telegramChatId: 'Telegram_Chat_ID'
+botToken: 'bot_token_generated_from_bot_father'
+superAdmin: 'default_admin_telegram_username'
+`)
+			log.Fatalf("File %s not exists. creating one for you now. \nyou should configure it by yourself then restart the bot", fileName)
+
+		}
+	}
+	data, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		log.Fatalf("yamlFile.Get err   #%v ", err)
 	}
