@@ -38,7 +38,7 @@ jenkins:
   password: 'jenkins_password'
   # dont change this value. if you want get notification from jenkins server you need install a notification plugin which will use this field
   telegramChatId: 'Telegram_Chat_ID'
-botToken: 'bot_token_generated_from_bot_father'
+botToken: 'bot_token_generated_from_bot_father'
 superAdmin: 'default_admin(telegram_username)'
 
 ```
