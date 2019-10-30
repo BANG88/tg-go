@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/bang88/gojenkins"
+	"github.com/bndr/gojenkins"
 
-	"github.com/go-telegram-bot-api/telegram-bot-api"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 const folder = "com.cloudbees.hudson.plugins.folder.Folder"
@@ -100,7 +100,6 @@ func (app *App) handleBuildProject(message *tgbotapi.Message) {
 	// If we want receive build results from Jenkins we
 	// need add these params
 	var params = map[string]string{app.conf.Jenkins.TelegramChatID: strconv.FormatInt(message.Chat.ID, 10)}
-
 	_, err := app.jenkins.BuildJob(command, params)
 	if err != nil {
 		fmt.Printf("Build error: %s", err)

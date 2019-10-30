@@ -1,11 +1,12 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"strings"
 
-	"github.com/bang88/gojenkins"
-	"github.com/go-telegram-bot-api/telegram-bot-api"
+	"github.com/bndr/gojenkins"
+	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
 // Commands supported commands
@@ -87,6 +88,7 @@ func (app *App) startBot() {
 			continue
 		}
 		if !update.Message.IsCommand() {
+			fmt.Print(update.Message.Chat)
 			continue
 		}
 		user := app.findUser(update.Message.Chat.UserName)
@@ -127,6 +129,6 @@ func main() {
 		operators: operators,
 	}
 	app.jenkins = app.getJenkinsInstance()
-	app.start()
+	// app.start()
 	app.startBot()
 }

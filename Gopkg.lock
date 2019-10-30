@@ -2,6 +2,7 @@
 
 
 [[projects]]
+  digest = "1:901119b39d36e3cb926ddc3585f481e0647ff2e44bff521995bd8bf9be9e9ca1"
   name = "github.com/asdine/storm"
   packages = [
     ".",
@@ -9,69 +10,95 @@
     "codec/json",
     "index",
     "internal",
-    "q"
+    "q",
   ]
+  pruneopts = ""
   revision = "a86fa5e09c9c50a06416b08fd9acd4839fb2d62e"
   version = "v2.1.0"
 
 [[projects]]
-  name = "github.com/bang88/gojenkins"
+  digest = "1:f9f3d2657bb0645dab1376f0141ca247c1fcbfde8a9f8ecdb27c8fa7941ed291"
+  name = "github.com/bndr/gojenkins"
   packages = ["."]
-  revision = "01a3ce091fcb92a3bf7cb646943ed142b1a81e81"
+  pruneopts = ""
+  revision = "de43c03cf849dd63a9737df6e05791c7a176c93d"
 
 [[projects]]
+  digest = "1:6150d0a72956eb2e50226e13ce59ef2a9636c0e8e1ac900d72f9b2097121cdf9"
   name = "github.com/coreos/bbolt"
   packages = ["."]
+  pruneopts = ""
   revision = "583e8937c61f1af6513608ccc75c97b6abdf4ff9"
   version = "v1.3.0"
 
 [[projects]]
+  digest = "1:64e1d1cfe16cd6659eea3a36859e38252861fa88c705db5239fac39fbdf94792"
   name = "github.com/go-telegram-bot-api/telegram-bot-api"
   packages = ["."]
+  pruneopts = ""
   revision = "5435d1d8eaf19425b40aebf050f5fda3280c00cc"
 
 [[projects]]
+  digest = "1:81e673df85e765593a863f67cba4544cf40e8919590f04d67664940786c2b61a"
   name = "github.com/mattn/go-runewidth"
   packages = ["."]
+  pruneopts = ""
   revision = "9e777a8366cce605130a531d2cd6363d07ad7317"
   version = "v0.0.2"
 
 [[projects]]
   branch = "master"
+  digest = "1:6ad32168a9cdb3585e45f44b2f914b4cefb0da0c23bac8482ed56d0942090be9"
   name = "github.com/olekukonko/tablewriter"
   packages = ["."]
+  pruneopts = ""
   revision = "b8a9be070da40449e501c3c4730a889e42d87a9e"
 
 [[projects]]
+  digest = "1:3bfdafac43ceb125f775eb79b8ee8f1e976e227464434ffad40f956ac029e760"
   name = "github.com/technoweenie/multipartstreamer"
   packages = ["."]
+  pruneopts = ""
   revision = "a90a01d73ae432e2611d178c18367fbaa13e0154"
   version = "v1.0.1"
 
 [[projects]]
   branch = "master"
+  digest = "1:a2702fb9a1197a9d8dea2cdbc23f785d326563da44e261a8ecac9f1da5bad9cb"
   name = "golang.org/x/net"
   packages = [
     "html",
-    "html/atom"
+    "html/atom",
   ]
+  pruneopts = ""
   revision = "b68f30494add4df6bd8ef5e82803f308e7f7c59c"
 
 [[projects]]
   branch = "master"
+  digest = "1:e80ec2e647548e8fd36bb104d39220f162b72f9222507f0fc1d5f0b7618a5e9f"
   name = "golang.org/x/sys"
   packages = ["unix"]
+  pruneopts = ""
   revision = "378d26f46672a356c46195c28f61bdb4c0a781dd"
 
 [[projects]]
+  branch = "v2"
+  digest = "1:06972867fb169c2b9886d666e38bb895a514a1424241e1c1c988977ab430b18e"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
-  version = "v2.2.1"
+  pruneopts = ""
+  revision = "970885f01c8bc1fecb7ab1c8ce8e7609bda45530"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "65a8399cb1cc54d4ab4eed0863067ced70f8dce38c63ac261eed94a9ec4e6b02"
+  input-imports = [
+    "github.com/asdine/storm",
+    "github.com/bndr/gojenkins",
+    "github.com/coreos/bbolt",
+    "github.com/go-telegram-bot-api/telegram-bot-api",
+    "github.com/olekukonko/tablewriter",
+    "gopkg.in/yaml.v2",
+  ]
   solver-name = "gps-cdcl"
   solver-version = 1
